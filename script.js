@@ -1,71 +1,74 @@
 (() => {
   'use strict';
 
-  // Year in footer
-  const yearEl = document.getElementById('year');
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
+  // Footer year
+  const yr = document.getElementById('yr');
+  if (yr) yr.textContent = new Date().getFullYear();
 
-  // Header scroll state
-  const header = document.getElementById('siteHeader');
+  // Sticky nav border on scroll
+  const nav = document.getElementById('nav');
   const onScroll = () => {
-    if (!header) return;
-    if (window.scrollY > 40) header.classList.add('is-scrolled');
-    else header.classList.remove('is-scrolled');
+    if (!nav) return;
+    nav.classList.toggle('is-scrolled', window.scrollY > 16);
   };
   document.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // Mobile nav
-  const toggle = document.getElementById('navToggle');
-  const mobileNav = document.getElementById('mobileNav');
-  if (toggle && mobileNav) {
-    const close = () => {
-      toggle.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
-      mobileNav.hidden = true;
-      mobileNav.style.display = 'none';
-    };
-    const open = () => {
-      toggle.classList.add('is-open');
-      toggle.setAttribute('aria-expanded', 'true');
-      mobileNav.hidden = false;
-      mobileNav.style.display = 'block';
-    };
-    toggle.addEventListener('click', () => {
-      if (mobileNav.hidden) open(); else close();
+  // Mobile overlay menu
+  const burger = document.getElementById('burger');
+  const overlay = document.getElementById('overlayNav');
+  const closeMenu = () => {
+    document.body.classList.remove('menu-open');
+    if (burger) burger.setAttribute('aria-expanded', 'false');
+    if (overlay) overlay.setAttribute('aria-hidden', 'true');
+  };
+  const openMenu = () => {
+    document.body.classList.add('menu-open');
+    if (burger) burger.setAttribute('aria-expanded', 'true');
+    if (overlay) overlay.setAttribute('aria-hidden', 'false');
+  };
+  if (burger) {
+    burger.addEventListener('click', () => {
+      if (document.body.classList.contains('menu-open')) closeMenu();
+      else openMenu();
     });
-    mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
   }
+  if (overlay) {
+    overlay.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.body.classList.contains('menu-open')) closeMenu();
+  });
 
-  // Reveal on scroll
-  const reveals = document.querySelectorAll('.reveal');
+  // Reveal-on-scroll
+  const reveals = document.querySelectorAll('.reveal, .reveal-img');
   if ('IntersectionObserver' in window && reveals.length) {
     const io = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
+      entries.forEach((entry, idx) => {
         if (entry.isIntersecting) {
-          entry.target.style.transitionDelay = `${Math.min(i * 60, 240)}ms`;
+          entry.target.style.transitionDelay = `${Math.min(idx * 70, 280)}ms`;
           entry.target.classList.add('is-visible');
           io.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    }, { threshold: 0.14, rootMargin: '0px 0px -6% 0px' });
     reveals.forEach(el => io.observe(el));
   } else {
     reveals.forEach(el => el.classList.add('is-visible'));
   }
 
-  // Smooth-scroll polyfill for anchor clicks (extra safety)
+  // Smooth-scroll for in-page anchors (account for sticky nav)
   document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', (e) => {
-      const id = link.getAttribute('href');
-      if (id && id.length > 1) {
-        const target = document.querySelector(id);
-        if (target) {
-          e.preventDefault();
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          history.pushState(null, '', id);
-        }
-      }
+      const href = link.getAttribute('href');
+      if (!href || href.length < 2) return;
+      const target = document.querySelector(href);
+      if (!target) return;
+      e.preventDefault();
+      const navH = nav ? nav.offsetHeight : 0;
+      const top = target.getBoundingClientRect().top + window.scrollY - navH - 8;
+      window.scrollTo({ top, behavior: 'smooth' });
+      history.pushState(null, '', href);
     });
   });
 })();
