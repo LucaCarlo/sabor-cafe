@@ -1,47 +1,39 @@
 # Sabor Café
 
-Sito vetrina per **Sabor Café** — bar contemporaneo.
-Identità calda ed elegante, palette caffè/crema/oro.
+Sito vetrina per **Sabor Café** — bar contemporaneo a Civitanova.
 
 ## Stack
 
-- HTML5 semantico
-- CSS moderno (custom properties, grid, clamp)
-- Vanilla JS (IntersectionObserver, no dipendenze)
-- Font: Cormorant Garamond + Inter (Google Fonts)
-- Foto: Unsplash (sostituibili in produzione con materiale proprio)
+- **Next.js 16** (App Router, React 19, TypeScript)
+- **Tailwind CSS v4** (CSS-first config, `@theme` inline)
+- **Framer Motion** — animazioni reveal/parallax
+- **GSAP** — timeline avanzate
+- **Lenis** — smooth scroll
+- **lucide-react** — icone
 
-## SEO
-
-- Meta tag completi (title, description, canonical)
-- Open Graph + Twitter Card
-- JSON-LD `CafeOrCoffeeShop`
-- `sitemap.xml` + `robots.txt`
-- Markup semantico, immagini con `alt` e `loading="lazy"`
-
-## Sviluppo locale
-
-Apri `index.html` direttamente nel browser, oppure:
+## Sviluppo
 
 ```bash
-npx serve .
+npm install
+npm run dev
+```
+
+→ http://localhost:3000
+
+## Build
+
+```bash
+npm run build
+npm run start
 ```
 
 ## Deploy
 
-Sito statico — funziona su qualsiasi host (GitHub Pages, Netlify, Vercel, server statico classico).
-
-### GitHub Pages
-
-```bash
-git push origin main
-```
-
-Poi nelle impostazioni del repo: **Settings → Pages → Branch: main / root**.
+Hostato su **Vercel**. Push su `main` → deploy automatico.
 
 ## Da personalizzare
 
-- Foto (sostituire URL Unsplash con foto reali del bar)
-- Indirizzo, orari e contatti nella sezione **Contatti**
-- Logo dorato originale (al posto del monogramma "S" in CSS)
-- `canonical` e `og:url` quando il dominio sarà definitivo
+- Foto reali del bar (sostituire URL Unsplash)
+- Logo dorato originale (al posto del monogramma "S")
+- Indirizzo, orari, telefono nella sezione Contatti
+- Dominio definitivo (`metadataBase` in `app/layout.tsx`)
